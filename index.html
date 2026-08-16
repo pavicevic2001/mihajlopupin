@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nikola Tesla</title>
+<meta name="description" content="Sajt posvećen srpskom naučniku i pronalazaču Nikoli Tesli — biografija i pregled njegovih pronalazaka.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: #070b14;
+  --bg-panel: #0f1626;
+  --bg-panel-2: #0c1220;
+  --border: rgba(133,192,255,0.14);
+  --border-strong: rgba(133,192,255,0.28);
+  --electric: #52d8ff;
+  --violet: #a081ff;
+  --copper: #c9835a;
+  --gold: #d8b45c;
+  --ivory: #ece5d4;
+  --dim: #7d879c;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--ivory);
+  font-family:'Inter', sans-serif;
+  line-height:1.6;
+  overflow-x:hidden;
+  width:100%;
+}
+
+body::before{
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(82,216,255,0.06), transparent 45%),
+    radial-gradient(circle at 85% 30%, rgba(160,129,255,0.07), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(201,131,90,0.05), transparent 45%);
+  pointer-events:none;
+  z-index:0;
+}
+
+h1,h2,h3,.display{
+  font-family:'Fraunces', serif;
+  font-weight:600;
+  letter-spacing:-0.01em;
+}
+
+.mono{ font-family:'JetBrains Mono', monospace; }
+
+a{color:inherit; text-decoration:none;}
+
+::selection{ background:var(--electric); color:#04070d; }
+
+/* ---------- NAV ---------- */
+header{
+  position:sticky; top:0; z-index:50;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px clamp(20px,5vw,56px);
+  background:rgba(7,11,20,0.82);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  width:100%;
+}
+
+.brand{ display:flex; align-items:center; gap:12px; }
+
+.brand svg{ width:30px; height:30px; }
+
+.brand-text{ font-family:'Fraunces', serif; font-size:1.05rem; letter-spacing:0.02em; color:var(--ivory); }
+.brand-text b{ color:var(--electric); font-weight:600; }
+
+nav.pages{ display:flex; gap:2px; background:var(--bg-panel); border:1px solid var(--border); border-radius:999px; padding:4px; }
+
+nav.pages a{
+  display:inline-block;
+  font-family:'Inter'; font-size:0.85rem; font-weight:500;
+  background:none; border:none; color:var(--dim);
+  padding:9px 18px; border-radius:999px; cursor:pointer;
+  transition:all .25s ease;
+}
+
+nav.pages a.active{ background:var(--electric); color:#04070d; }
+nav.pages a:not(.active):hover{ color:var(--ivory); }
+
+.lang-switch{ display:flex; gap:8px; align-items:center; }
+.lang-switch button{
+  background:none; border:1px solid var(--border);
+  width:30px; height:22px; padding:0; border-radius:4px;
+  cursor:pointer; transition:all .2s ease; overflow:hidden;
+  opacity:0.5; filter:grayscale(70%);
+}
+.lang-switch button svg{ display:block; width:100%; height:100%; }
+.lang-switch button:hover{ opacity:0.85; }
+.lang-switch button.active{ opacity:1; filter:none; border-color:var(--gold); box-shadow:0 0 0 2px rgba(216,180,92,0.18); }
+
+.nav-right{ display:flex; align-items:center; gap:14px; }
+
+@media(max-width:820px){
+  nav.pages{ display:none; }
+}
+
+/* mobile page nav (bottom) */
+.mobile-nav{ display:none; }
+@media(max-width:820px){
+  .mobile-nav{
+    display:flex; justify-content:space-around;
+    position:fixed; bottom:0; left:0; right:0; z-index:50;
+    background:rgba(7,11,20,0.95); border-top:1px solid var(--border);
+    backdrop-filter:blur(10px); padding:10px 6px;
+  }
+  .mobile-nav a{
+    display:block; background:none; border:none; color:var(--dim);
+    font-family:'Inter'; font-size:0.78rem; padding:6px 10px; cursor:pointer;
+  }
+  .mobile-nav a.active{ color:var(--electric); }
+  body{ padding-bottom:56px; }
+}
+
+/* ---------- LAYOUT ---------- */
+main{ position:relative; z-index:1; }
+.page{ animation:fadein .5s ease; }
+@keyframes fadein{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+.wrap{ max-width:1120px; margin:0 auto; padding:0 clamp(20px,5vw,56px); }
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;
+  min-height:88vh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center;
+  padding:90px 20px 60px;
+  overflow:hidden;
+  width:100%;
+}
+
+.arcs{ position:absolute; inset:0; width:100%; height:100%; z-index:0; opacity:0.9; }
+.arcs path{
+  fill:none; stroke-linecap:round;
+}
+.arc-main{ stroke:var(--electric); stroke-width:1.6; filter:drop-shadow(0 0 6px rgba(82,216,255,0.9)); animation:flicker 3.2s infinite ease-in-out; }
+.arc-2{ stroke:var(--violet); stroke-width:1; filter:drop-shadow(0 0 5px rgba(160,129,255,0.8)); animation:flicker 2.6s infinite ease-in-out .4s; }
+.arc-3{ stroke:var(--electric); stroke-width:0.8; opacity:0.5; filter:drop-shadow(0 0 4px rgba(82,216,255,0.6)); animation:flicker 4s infinite ease-in-out 1s; }
+
+@keyframes flicker{
+  0%, 100%{ opacity:0.85; }
+  45%{ opacity:0.25; }
+  47%{ opacity:0.9; }
+  60%{ opacity:0.4; }
+  62%{ opacity:1; }
+  80%{ opacity:0.5; }
+}
+
+.eyebrow{
+  font-family:'JetBrains Mono'; font-size:0.78rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--copper); margin-bottom:22px; position:relative; z-index:1;
+}
+
+.hero h1{
+  font-size:clamp(3.2rem, 9vw, 7.2rem);
+  line-height:0.96;
+  color:var(--ivory);
+  position:relative; z-index:1;
+}
+.hero h1 span{ display:block; color:transparent; -webkit-text-stroke:1.5px var(--electric); }
+
+.hero .sub{
+  margin-top:26px; max-width:640px;
+  font-size:1.08rem; color:var(--dim);
+  position:relative; z-index:1;
+}
+
+.hero .dates{
+  margin-top:18px; font-family:'JetBrains Mono'; font-size:0.85rem;
+  color:var(--gold); letter-spacing:0.05em; position:relative; z-index:1;
+}
+
+/* ---------- STAT STRIP ---------- */
+.stat-strip{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:var(--bg-panel-2);
+  width:100%;
+}
+.stat{ padding:34px 24px; text-align:center; border-right:1px solid var(--border); }
+.stat:last-child{ border-right:none; }
+.stat .num{ font-family:'Fraunces', serif; font-size:2rem; color:var(--electric); }
+.stat .label{ margin-top:6px; font-family:'JetBrains Mono'; font-size:0.7rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--dim); }
+
+@media(max-width:700px){
+  .stat-strip{ grid-template-columns:repeat(2,1fr); }
+  .stat{ border-bottom:1px solid var(--border); }
+}
+
+/* ---------- SECTIONS ---------- */
+section{ padding:100px 0; position:relative; }
+section.tight{ padding:70px 0; }
+
+.section-head{ margin-bottom:48px; max-width:640px; }
+.kicker{ font-family:'JetBrains Mono'; font-size:0.75rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--copper); margin-bottom:14px; }
+.section-head h2{ font-size:clamp(2rem,4vw,2.8rem); color:var(--ivory); }
+
+.intro-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:70px; align-items:start; }
+.intro-grid p{ color:#c7cedd; font-size:1.02rem; margin-bottom:18px; }
+.intro-grid p:last-child{ margin-bottom:0; }
+
+.quote-panel{
+  background:var(--bg-panel); border:1px solid var(--border); border-left:2px solid var(--electric);
+  padding:32px 30px; border-radius:4px;
+}
+.quote-panel .mark{ font-family:'Fraunces', serif; font-size:3rem; color:var(--electric); line-height:0.5; display:block; margin-bottom:10px; }
+.quote-panel blockquote{ font-family:'Fraunces', serif; font-size:1.28rem; font-style:italic; color:var(--ivory); line-height:1.4; }
+.quote-panel cite{ display:block; margin-top:16px; font-family:'JetBrains Mono'; font-size:0.75rem; color:var(--dim); font-style:normal; letter-spacing:0.05em; }
+
+@media(max-width:840px){ .intro-grid{ grid-template-columns:1fr; gap:36px; } }
+
+/* ---------- TIMELINE (biography) ---------- */
+.timeline{ position:relative; margin-top:10px; }
+.timeline::before{
+  content:''; position:absolute; left:120px; top:0; bottom:0; width:1px;
+  background:linear-gradient(to bottom, transparent, var(--border-strong) 6%, var(--border-strong) 94%, transparent);
+}
+@media(max-width:640px){ .timeline::before{ left:14px; } }
+
+.t-item{ position:relative; display:grid; grid-template-columns:120px 1fr; gap:32px; padding:26px 0; }
+@media(max-width:640px){ .t-item{ grid-template-columns:1fr; padding-left:30px; gap:6px; } }
+
+.t-year{ font-family:'JetBrains Mono'; font-size:0.92rem; color:var(--gold); padding-top:2px; text-align:right; }
+@media(max-width:640px){ .t-year{ text-align:left; } }
+
+.t-dot{
+  position:absolute; left:117px; top:32px; width:7px; height:7px; border-radius:50%;
+  background:var(--electric); box-shadow:0 0 0 4px rgba(82,216,255,0.12), 0 0 10px rgba(82,216,255,0.8);
+}
+@media(max-width:640px){ .t-dot{ left:11px; } }
+
+.t-body h3{ font-size:1.15rem; color:var(--ivory); margin-bottom:6px; font-weight:600; }
+.t-body p{ color:#b7bfd0; font-size:0.96rem; max-width:560px; }
+
+/* ---------- INVENTIONS GRID ---------- */
+.inv-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+@media(max-width:900px){ .inv-grid{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:600px){ .inv-grid{ grid-template-columns:1fr; } }
+
+.inv-card{
+  background:var(--bg-panel); border:1px solid var(--border); border-radius:8px;
+  padding:26px 24px; transition:all .3s ease; position:relative; overflow:hidden;
+}
+.inv-card:hover{ border-color:var(--border-strong); transform:translateY(-3px); box-shadow:0 14px 30px -18px rgba(82,216,255,0.35); }
+.inv-card .icon{ width:38px; height:38px; margin-bottom:18px; color:var(--electric); }
+.inv-card .year{ font-family:'JetBrains Mono'; font-size:0.72rem; color:var(--copper); letter-spacing:0.06em; }
+.inv-card h3{ font-size:1.08rem; color:var(--ivory); margin:8px 0 10px; font-weight:600; }
+.inv-card p{ color:#b7bfd0; font-size:0.92rem; }
+
+/* ---------- FOOTER ---------- */
+footer{
+  border-top:1px solid var(--border); padding:40px clamp(20px,5vw,56px);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+  color:var(--dim); font-family:'JetBrains Mono'; font-size:0.75rem; letter-spacing:0.03em;
+  width:100%;
+}
+
+.footer-mark{ color:var(--electric); }
+
+/* accessibility */
+button:focus-visible, a:focus-visible{ outline:2px solid var(--electric); outline-offset:2px; }
+
+/* ---------- FINER RESPONSIVE TUNING ---------- */
+@media(max-width:820px){
+  header{ padding:14px clamp(16px,5vw,32px); }
+}
+
+@media(max-width:600px){
+  .brand-text{ font-size:0.92rem; }
+  .brand svg{ width:26px; height:26px; }
+  .hero{ min-height:auto; padding:70px 16px 44px; }
+  .hero .sub{ font-size:0.98rem; }
+  section{ padding:64px 0; }
+  section.tight{ padding:44px 0; }
+  .section-head{ margin-bottom:32px; }
+  .quote-panel{ padding:26px 22px; }
+  .quote-panel blockquote{ font-size:1.1rem; }
+  .inv-card{ padding:22px 20px; }
+  footer{ flex-direction:column; align-items:flex-start; text-align:left; padding:32px 20px 24px; }
+}
+
+@media(max-width:400px){
+  .hero h1{ font-size:clamp(2.5rem, 13vw, 4rem); }
+  .eyebrow{ font-size:0.68rem; letter-spacing:0.14em; }
+  .stat .num{ font-size:1.6rem; }
+  .lang-switch button{ width:26px; height:19px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .arc-main,.arc-2,.arc-3{ animation:none; opacity:0.6; }
+  html{ scroll-behavior:auto; }
+}
+
+</style>
+</head>
+<body data-title-sr="Nikola Tesla" data-title-en="Nikola Tesla">
+
+<header>
+  <div class="brand">
+    <svg viewBox="0 0 40 40" fill="none">
+      <circle cx="20" cy="20" r="18" stroke="#52d8ff" stroke-width="1.2" opacity="0.5"/>
+      <path d="M20 6 L20 16 M20 24 L20 34 M14 10 L26 30 M26 10 L14 30" stroke="#52d8ff" stroke-width="1.4" stroke-linecap="round"/>
+      <circle cx="20" cy="20" r="3" fill="#d8b45c"/>
+    </svg>
+    <div class="brand-text"><b>N.</b>Tesla</div>
+  </div>
+
+  <nav class="pages">
+    <a href="index.html" class="active" data-sr="Početna" data-en="Home">Početna</a>
+    <a href="biography.html" data-sr="Biografija" data-en="Biography">Biografija</a>
+    <a href="inventions.html" data-sr="Pronalasci" data-en="Inventions">Pronalasci</a>
+  </nav>
+
+  <div class="nav-right">
+    <div class="lang-switch">
+      <button data-lang="sr" class="active" aria-label="Srpski jezik" title="Srpski">
+        <svg viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg"><rect width="3" height="2" fill="#fff"/><rect width="3" height="0.667" y="0" fill="#C6363C"/><rect width="3" height="0.667" y="0.667" fill="#0C4076"/></svg>
+      </button>
+      <button data-lang="en" aria-label="English language" title="English">
+        <svg viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+          <clipPath id="t"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+          <g clip-path="url(#t)">
+            <path d="M0,0 v30 h60 v-30 z" fill="#00247d"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+            <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#t)" stroke="#cf142b" stroke-width="4"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+            <path d="M30,0 v30 M0,15 h60" stroke="#cf142b" stroke-width="6"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page" id="home">
+
+    <div class="hero">
+      <svg class="arcs" viewBox="0 0 1200 700" preserveAspectRatio="none">
+        <path class="arc-main" d="M120 80 L180 220 L110 260 L220 420 L150 460 L260 620"/>
+        <path class="arc-2" d="M1080 60 L1010 190 L1090 230 L960 380 L1040 430 L930 600"/>
+        <path class="arc-3" d="M600 40 L560 150 L640 190 L580 300"/>
+        <path class="arc-3" d="M300 500 L360 560 L320 610 L400 660"/>
+        <path class="arc-2" d="M900 500 L850 550 L900 600 L840 650"/>
+      </svg>
+
+      <div class="eyebrow" data-sr="Srpski naučnik i pronalazač · 1856—1943" data-en="Serbian scientist &amp; inventor · 1856—1943">Srpski naučnik i pronalazač · 1856—1943</div>
+      <h1>NIKOLA<span>TESLA</span></h1>
+      <p class="sub" data-sr="Čovek koji je osvetlio dvadeseti vek. Pronalazač sistema naizmenične struje, vizionar bežične tehnologije i vlasnik preko 300 patenata širom sveta." data-en="The man who electrified the twentieth century. Inventor of the alternating current system, visionary of wireless technology, and holder of more than 300 patents worldwide.">Čovek koji je osvetlio dvadeseti vek. Pronalazač sistema naizmenične struje, vizionar bežične tehnologije i vlasnik preko 300 patenata širom sveta.</p>
+      <div class="dates">SMILJAN, 1856 — NEW YORK, 1943</div>
+    </div>
+
+    <div class="stat-strip">
+      <div class="stat"><div class="num mono">300+</div><div class="label" data-sr="Patenata" data-en="Patents">Patenata</div></div>
+      <div class="stat"><div class="num mono">1887</div><div class="label" data-sr="AC motor" data-en="AC Motor">AC motor</div></div>
+      <div class="stat"><div class="num mono">1891</div><div class="label" data-sr="Teslin kalem" data-en="Tesla Coil">Teslin kalem</div></div>
+      <div class="stat"><div class="num mono">7</div><div class="label" data-sr="Zemalja državljanstva" data-en="Countries of citizenship">Zemalja državljanstva</div></div>
+    </div>
+
+    <section>
+      <div class="wrap intro-grid">
+        <div>
+          <div class="kicker" data-sr="O NJEMU" data-en="ABOUT HIM">O NJEMU</div>
+          <h2 style="margin-bottom:22px;" data-sr="Um ispred svog vremena" data-en="A mind ahead of its time">Um ispred svog vremena</h2>
+          <p data-sr="Nikola Tesla rođen je u srpskoj porodici u selu Smiljan, u tadašnjem Austrijskom carstvu. Sin sveštenika, od najranijeg detinjstva pokazivao je izuzetnu maštu i sposobnost da u mislima vizualizuje mašine pre nego što bi ih ikada nacrtao ili sagradio." data-en="Nikola Tesla was born into a Serbian family in the village of Smiljan, then part of the Austrian Empire. The son of a priest, he showed extraordinary imagination from early childhood and an ability to visualize machines in his mind long before ever drawing or building them.">Nikola Tesla rođen je u srpskoj porodici u selu Smiljan, u tadašnjem Austrijskom carstvu. Sin sveštenika, od najranijeg detinjstva pokazivao je izuzetnu maštu i sposobnost da u mislima vizualizuje mašine pre nego što bi ih ikada nacrtao ili sagradio.</p>
+          <p data-sr="Preselivši se u Sjedinjene Države 1884. godine, Tesla je razvio sistem naizmenične struje koji je postao osnova modernog elektroenergetskog sistema. Njegov rad na bežičnom prenosu energije, radio-talasima i visokofrekventnoj struji ostavio je trag koji se oseća u gotovo svakom uređaju koji koristimo danas." data-en="After moving to the United States in 1884, Tesla developed the alternating current system that became the foundation of the modern power grid. His work on wireless energy transmission, radio waves and high-frequency current left a mark still felt in nearly every device we use today.">Preselivši se u Sjedinjene Države 1884. godine, Tesla je razvio sistem naizmenične struje koji je postao osnova modernog elektroenergetskog sistema. Njegov rad na bežičnom prenosu energije, radio-talasima i visokofrekventnoj struji ostavio je trag koji se oseća u gotovo svakom uređaju koji koristimo danas.</p>
+        </div>
+
+        <div class="quote-panel">
+          <span class="mark">"</span>
+          <blockquote data-sr="Sadašnjost pripada njima; budućnost, za koju sam zaista radio, pripada meni." data-en="The present is theirs; the future, for which I really worked, is mine.">Sadašnjost pripada njima; budućnost, za koju sam zaista radio, pripada meni.</blockquote>
+          <cite data-sr="— NIKOLA TESLA" data-en="— NIKOLA TESLA">— NIKOLA TESLA</cite>
+        </div>
+      </div>
+    </section>
+
+  </section>
+
+</main>
+
+<footer>
+  <div data-sr="© 2026 Nikola Tesla" data-en="© 2026 Nikola Tesla">© 2026 Nikola Tesla</div>
+  <div><span class="footer-mark">⚡</span> <span data-sr="Sadašnjost pripada njima; budućnost je moja." data-en="The present is theirs; the future is mine.">Sadašnjost pripada njima; budućnost je moja.</span></div>
+</footer>
+
+<nav class="mobile-nav">
+  <a href="index.html" class="active" data-sr="Početna" data-en="Home">Početna</a>
+  <a href="biography.html" data-sr="Biografija" data-en="Biography">Biografija</a>
+  <a href="inventions.html" data-sr="Pronalasci" data-en="Inventions">Pronalasci</a>
+</nav>
+
+<script>
+// Language switching, persisted across pages via localStorage
+function setLang(lang){
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-sr]').forEach(el=>{
+    const val = lang === 'sr' ? el.dataset.sr : el.dataset.en;
+    if(val !== undefined) el.innerHTML = val;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+  document.title = lang === 'sr' ? document.body.dataset.titleSr : document.body.dataset.titleEn;
+  try{ localStorage.setItem('tesla-lang', lang); }catch(e){}
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  document.querySelectorAll('.lang-switch button').forEach(btn=>{
+    btn.addEventListener('click', ()=> setLang(btn.dataset.lang));
+  });
+
+  let saved = 'sr';
+  try{ saved = localStorage.getItem('tesla-lang') || 'sr'; }catch(e){}
+  setLang(saved);
+});
+
+</script>
+</body>
+</html>
