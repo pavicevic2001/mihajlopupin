@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mihajlo Pupin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0f1b2c;
+    --ink-2:#16283f;
+    --ink-3:#1e3252;
+    --copper:#c17a3e;
+    --copper-light:#e0a868;
+    --copper-dark:#8f5726;
+    --wheat:#d9a93b;
+    --parchment:#f5efdf;
+    --paper-2:#ece2c8;
+    --charcoal:#221c14;
+    --slate:#8a93a8;
+    --cream:#eee6d3;
+    --line:rgba(238,230,211,0.14);
+    --line-dark:rgba(34,28,20,0.14);
+    --maxw:1180px;
+    --serif:'Spectral', Georgia, serif;
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--sans);
+    background:var(--parchment);
+    color:var(--charcoal);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  img,svg{display:block; max-width:100%;}
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+  @media (max-width:640px){ .wrap{padding:0 20px;} }
+
+  h1,h2,h3,h4{font-family:var(--serif); font-weight:600; line-height:1.15; letter-spacing:-0.01em;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--copper); display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .eyebrow::before{content:""; width:22px; height:1px; background:var(--copper); display:inline-block;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(15,27,44,0.92); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .headbar{
+    max-width:var(--maxw); margin:0 auto; padding:0 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  @media (max-width:640px){ .headbar{padding:0 20px; height:66px;} }
+
+  .brand{display:flex; align-items:center; gap:12px; color:var(--cream);}
+  .brand-mark{width:34px; height:34px; flex:none;}
+  .brand-text{font-family:var(--serif); font-size:19px; font-weight:600; color:var(--cream); letter-spacing:0.01em;}
+  .brand-sub{display:block; font-family:var(--mono); font-size:10px; letter-spacing:0.12em; color:var(--copper-light); text-transform:uppercase; margin-top:1px;}
+
+  nav.primary-nav{display:flex; align-items:center; gap:6px;}
+  .navlink{
+    font-family:var(--sans); font-size:14.5px; font-weight:500; color:var(--cream);
+    padding:10px 16px; border-radius:3px; position:relative; opacity:0.72;
+    transition:opacity .2s ease;
+  }
+  .navlink:hover{opacity:1;}
+  .navlink.active{opacity:1;}
+  .navlink.active::after{
+    content:""; position:absolute; left:16px; right:16px; bottom:4px; height:2px; background:var(--copper);
+  }
+
+  .head-controls{display:flex; align-items:center; gap:14px;}
+
+  .langtoggle{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.05em; color:var(--cream);
+    border:1px solid rgba(238,230,211,0.3); border-radius:20px; padding:6px 4px;
+    display:flex; align-items:center; background:transparent; cursor:pointer;
+  }
+  .langtoggle span{padding:3px 10px; border-radius:16px; transition:background .2s ease, color .2s ease;}
+  .langtoggle span.active{background:var(--copper); color:var(--ink);}
+
+  .hamburger{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:38px; height:38px; border:none; background:transparent; cursor:pointer;
+    padding:0;
+  }
+  .hamburger .bar{width:22px; height:2px; background:var(--cream); border-radius:1px; margin-left:auto;}
+  .hamburger .bar:nth-child(2){width:16px;}
+
+  .menu-panel{
+    position:fixed; top:0; right:0; height:100%; width:78%; max-width:300px;
+    background:var(--ink); border-left:1px solid var(--line);
+    transform:translateX(100%); transition:transform .32s cubic-bezier(.4,0,.2,1);
+    z-index:200; padding:90px 28px 28px; display:flex; flex-direction:column; gap:6px;
+  }
+  .menu-panel.open{transform:translateX(0);}
+  .menu-scrim{
+    position:fixed; inset:0; background:rgba(10,16,26,0.55); z-index:150;
+    opacity:0; pointer-events:none; transition:opacity .3s ease;
+  }
+  .menu-scrim.open{opacity:1; pointer-events:auto;}
+  .menu-panel .navlink{width:100%; font-size:17px; padding:14px 12px; opacity:0.85;}
+  .menu-panel .navlink.active{opacity:1; color:var(--copper-light);}
+  .menu-panel .navlink.active::after{display:none;}
+  .menu-close{
+    position:absolute; top:24px; right:24px; width:34px; height:34px; background:transparent;
+    border:none; cursor:pointer; color:var(--cream); font-size:22px; line-height:1;
+  }
+  .menu-panel .langtoggle{margin-top:18px; align-self:flex-start;}
+
+  @media (max-width:860px){
+    nav.primary-nav{display:none;}
+    .hamburger{display:flex;}
+    .head-controls .langtoggle{display:none;}
+  }
+
+  /* ---------- COIL DIVIDER (signature motif) ---------- */
+  .coil{width:100%; display:block;}
+  .coil path{fill:none; stroke:var(--copper); stroke-width:1.6;}
+  .coil circle.pulse{fill:var(--copper-light);}
+  .coil-dark path{stroke:var(--copper-light); opacity:0.55;}
+  .coil-light path{stroke:var(--copper-dark); opacity:0.55;}
+
+  @keyframes travel{
+    0%{ offset-distance:0%; opacity:0; }
+    6%{ opacity:1; }
+    94%{ opacity:1; }
+    100%{ offset-distance:100%; opacity:0; }
+  }
+  .pulse-dot{
+    offset-path:path("M0,30 L40,30 C48,30 48,6 56,6 C64,6 64,30 72,30 L 148,30 C156,30 156,6 164,6 C172,6 172,30 180,30 L 256,30 C264,30 264,6 272,6 C280,6 280,30 288,30 L 364,30 C372,30 372,6 380,6 C388,6 388,30 396,30 L 472,30 C480,30 480,6 488,6 C496,6 496,30 504,30 L 580,30 C588,30 588,6 596,6 C604,6 604,30 612,30 L 688,30 C696,30 696,6 704,6 C712,6 712,30 720,30 L 796,30 C804,30 804,6 812,6 C820,6 820,30 828,30 L 900,30");
+    animation:travel 7s linear infinite;
+  }
+  @media (prefers-reduced-motion:reduce){ .pulse-dot{animation:none; opacity:0;} }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:linear-gradient(180deg, var(--ink) 0%, var(--ink-2) 100%);
+    color:var(--cream); padding:96px 0 0; position:relative;
+  }
+  .hero-inner{max-width:var(--maxw); margin:0 auto; padding:0 32px 70px; position:relative;}
+  @media (max-width:640px){ .hero-inner{padding:0 20px 50px;} .hero{padding-top:64px;} }
+  .hero h1{
+    font-size:clamp(44px, 8vw, 88px); color:var(--cream); max-width:900px;
+  }
+  .hero .subtitle{
+    font-family:var(--serif); font-style:italic; font-weight:400; font-size:clamp(18px,2.4vw,23px);
+    color:var(--copper-light); max-width:640px; margin-top:22px; line-height:1.5;
+  }
+  .hero-cta{display:flex; gap:14px; margin-top:40px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--sans); font-size:14.5px; font-weight:600; padding:14px 26px; border-radius:2px;
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer; border:1px solid transparent;
+    transition:transform .15s ease, background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--copper); color:var(--ink);}
+  .btn-primary:hover{background:var(--copper-light);}
+  .btn-ghost{border-color:rgba(238,230,211,0.35); color:var(--cream);}
+  .btn-ghost:hover{border-color:var(--copper-light); color:var(--copper-light);}
+
+  .hero-coil-wrap{margin-top:64px;}
+
+  /* ---------- SECTIONS GENERIC ---------- */
+  section{padding:88px 0;}
+  @media (max-width:640px){ section{padding:56px 0;} }
+  .section-light{background:var(--parchment); color:var(--charcoal);}
+  .section-dark{background:var(--ink); color:var(--cream);}
+  .section-paper2{background:var(--paper-2); color:var(--charcoal);}
+
+  .section-head{max-width:680px; margin-bottom:48px;}
+  .section-head h2{font-size:clamp(28px,4vw,42px);}
+  .section-light .eyebrow, .section-paper2 .eyebrow{color:var(--copper-dark);}
+
+  p.lead{font-size:18px; line-height:1.75; max-width:680px; color:inherit;}
+  .section-dark p.lead{color:var(--cream); opacity:0.88;}
+  .section-light p.lead, .section-paper2 p.lead{opacity:0.82;}
+
+  /* ---------- FACTS STRIP ---------- */
+  .facts-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1px;
+    background:var(--line-dark); border:1px solid var(--line-dark); margin-top:44px;
+  }
+  .fact-cell{background:var(--parchment); padding:26px 22px;}
+  .fact-value{font-family:var(--serif); font-size:22px; font-weight:600; color:var(--copper-dark);}
+  .fact-label{font-family:var(--mono); font-size:11.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--slate); margin-top:8px; color:#6b6455;}
+
+  /* ---------- PILLAR CARDS ---------- */
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px;}
+  @media (max-width:860px){ .pillars{grid-template-columns:1fr;} }
+  .pillar-card{
+    background:var(--ink-2); border:1px solid var(--line); padding:32px 28px; cursor:pointer;
+    transition:border-color .2s ease, background .2s ease;
+  }
+  .pillar-card:hover{border-color:var(--copper); background:var(--ink-3);}
+  .pillar-num{font-family:var(--mono); font-size:12px; color:var(--copper-light); letter-spacing:0.1em;}
+  .pillar-card h3{font-size:22px; color:var(--cream); margin-top:14px;}
+  .pillar-card p{font-size:14.5px; color:var(--cream); opacity:0.72; margin-top:12px; line-height:1.65;}
+  .pillar-link{font-family:var(--mono); font-size:12px; color:var(--copper-light); margin-top:20px; display:inline-flex; align-items:center; gap:6px;}
+
+  /* ---------- REFLECTION ---------- */
+  .reflection{
+    border-left:2px solid var(--copper); padding-left:28px; max-width:720px; margin-top:8px;
+  }
+  .reflection p{font-family:var(--serif); font-style:italic; font-size:20px; line-height:1.7; color:var(--charcoal); opacity:0.85;}
+
+  /* ---------- CTA BAND ---------- */
+  .ctaband{
+    background:var(--ink); color:var(--cream);
+    display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--line);
+  }
+  @media (max-width:760px){ .ctaband{grid-template-columns:1fr;} }
+  .ctaband a{
+    padding:56px 44px; border-right:1px solid var(--line); position:relative;
+    transition:background .2s ease;
+  }
+  .ctaband a:last-child{border-right:none;}
+  .ctaband a:hover{background:var(--ink-2);}
+  .ctaband .eyebrow{color:var(--copper-light);}
+  .ctaband h3{font-size:28px; color:var(--cream); margin-top:4px;}
+  .ctaband p{font-size:14.5px; opacity:0.7; margin-top:12px; max-width:340px;}
+  .ctaband .arrow{margin-top:24px; font-family:var(--mono); font-size:13px; color:var(--copper-light);}
+
+  /* ---------- PAGE HEADER (Life / Achievements) ---------- */
+  .page-header{background:var(--ink); color:var(--cream); padding:120px 0 64px;}
+  @media (max-width:640px){ .page-header{padding:92px 0 44px;} }
+  .page-header h1{font-size:clamp(36px,6vw,58px); color:var(--cream); max-width:760px;}
+  .page-header p.lead{margin-top:20px;}
+
+  /* ---------- LIFE: content sections ---------- */
+  .life-section{
+    display:grid; grid-template-columns:200px 1fr; gap:48px; padding:44px 0;
+    border-top:1px solid var(--line-dark);
+  }
+  .life-section:last-child{border-bottom:1px solid var(--line-dark);}
+  @media (max-width:760px){ .life-section{grid-template-columns:1fr; gap:14px;} }
+  .life-section .year-tag{font-family:var(--mono); font-size:13px; color:var(--copper-dark); letter-spacing:0.06em; padding-top:4px;}
+  .life-section h3{font-size:25px; margin-bottom:14px;}
+  .life-section p{max-width:640px; opacity:0.86; font-size:15.5px;}
+  .life-section p + p{margin-top:12px;}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{position:relative; margin-top:40px; padding-left:36px;}
+  .timeline::before{content:""; position:absolute; left:6px; top:6px; bottom:6px; width:1px; background:var(--line-dark);}
+  .tl-item{position:relative; padding-bottom:34px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:""; position:absolute; left:-36px; top:4px; width:13px; height:13px; border-radius:50%;
+    background:var(--parchment); border:2px solid var(--copper);
+  }
+  .tl-year{font-family:var(--mono); font-size:13px; color:var(--copper-dark); font-weight:500;}
+  .tl-text{font-size:15px; margin-top:6px; opacity:0.85; max-width:600px;}
+
+  /* ---------- ACHIEVEMENT CARDS ---------- */
+  .ach-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line-dark); border:1px solid var(--line-dark); margin-top:8px;}
+  @media (max-width:920px){ .ach-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .ach-grid{grid-template-columns:1fr;} }
+  .ach-card{background:var(--parchment); padding:32px 26px;}
+  .ach-card .ach-year{font-family:var(--mono); font-size:12px; color:var(--copper-dark); letter-spacing:0.05em;}
+  .ach-card h3{font-size:19px; margin-top:10px; line-height:1.3;}
+  .ach-card p{font-size:14px; opacity:0.78; margin-top:12px; line-height:1.6;}
+
+  /* ---------- HONORS LIST ---------- */
+  .honors{margin-top:16px; border-top:1px solid var(--line);}
+  .honor-row{
+    display:flex; justify-content:space-between; gap:24px; padding:20px 0; border-bottom:1px solid var(--line);
+    font-size:15px;
+  }
+  .honor-row span:first-child{color:var(--cream);}
+  .honor-row span:last-child{font-family:var(--mono); font-size:12.5px; color:var(--copper-light); white-space:nowrap;}
+
+  /* ---------- LEGACY ---------- */
+  .legacy-box{background:var(--paper-2); border:1px solid var(--line-dark); padding:40px; margin-top:40px;}
+  .legacy-box p{max-width:760px; font-size:15.5px; opacity:0.85;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink); color:var(--cream); padding:56px 0 34px; border-top:1px solid var(--line);}
+  .footer-top{display:flex; justify-content:space-between; align-items:flex-start; gap:24px; flex-wrap:wrap;}
+  .footer-brand{font-family:var(--serif); font-size:20px;}
+  .footer-nav{display:flex; gap:28px; flex-wrap:wrap;}
+  .footer-nav a{font-size:13.5px; opacity:0.7;}
+  .footer-nav a:hover{opacity:1; color:var(--copper-light);}
+  .footer-note{font-size:12.5px; opacity:0.45; margin-top:36px; font-family:var(--mono);}
+
+  /* ---------- PAGE VISIBILITY ---------- */
+  .page{display:none;}
+  .page.active{display:block;}
+
+  ::selection{background:var(--copper); color:var(--ink);}
+  :focus-visible{outline:2px solid var(--copper); outline-offset:2px;}
+</style>
+</head>
+<body data-page="home">
+
+<div class="menu-scrim" id="scrim"></div>
+
+<header>
+  <div class="headbar">
+    <a href="index.html" class="brand" data-page-link="home">
+      <svg class="brand-mark" viewBox="0 0 34 34" fill="none">
+        <circle cx="17" cy="17" r="16" stroke="#c17a3e" stroke-width="1.4"/>
+        <path d="M6 17 C10 17 10 9 14 9 C18 9 18 25 22 25 C26 25 26 17 30 17" stroke="#e0a868" stroke-width="1.4" fill="none"/>
+      </svg>
+      <span>
+        <span class="brand-text">Mihajlo Pupin</span>
+        <span class="brand-sub" data-i18n="meta.tag">Fizičar &amp; izumitelj</span>
+      </span>
+    </a>
+
+    <nav class="primary-nav" aria-label="Glavna navigacija">
+      <a href="index.html" class="navlink active" data-page-link="home" data-i18n="nav.home">Početna</a>
+      <a href="zivot.html" class="navlink" data-page-link="life" data-i18n="nav.life">Život</a>
+      <a href="dostignuca.html" class="navlink" data-page-link="achievements" data-i18n="nav.achievements">Dostignuća</a>
+    </nav>
+
+    <div class="head-controls">
+      <button class="langtoggle" id="langToggleDesktop" aria-label="Promeni jezik">
+        <span class="lang-sr active">SR</span><span class="lang-en">EN</span>
+      </button>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Otvori meni">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="menu-panel" id="menuPanel" aria-label="Meni za mobilne uređaje">
+  <button class="menu-close" id="menuCloseBtn" aria-label="Zatvori meni">&times;</button>
+  <a href="index.html" class="navlink active" data-page-link="home" data-i18n="nav.home">Početna</a>
+  <a href="zivot.html" class="navlink" data-page-link="life" data-i18n="nav.life">Život</a>
+  <a href="dostignuca.html" class="navlink" data-page-link="achievements" data-i18n="nav.achievements">Dostignuća</a>
+  <button class="langtoggle" id="langToggleMobile" aria-label="Promeni jezik">
+    <span class="lang-sr active">SR</span><span class="lang-en">EN</span>
+  </button>
+</nav>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div class="footer-brand">Mihajlo Pupin <span style="opacity:.5; font-size:14px;">— 1858–1935</span></div>
+      <nav class="footer-nav">
+        <a href="index.html" data-page-link="home" data-i18n="nav.home">Početna</a>
+        <a href="zivot.html" data-page-link="life" data-i18n="nav.life">Život</a>
+        <a href="dostignuca.html" data-page-link="achievements" data-i18n="nav.achievements">Dostignuća</a>
+      </nav>
+    </div>
+    <div class="footer-note" data-i18n="footer.note">Napravljeno kao posveta srpskom naučniku i njegovom putu od Idvora do Kolumbije.</div>
+  </div>
+</footer>
+
+<script>
+const COIL_SVG_LIGHT = `<svg class="coil coil-light" viewBox="0 0 900 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<path d="M0,30 L40,30 C48,30 48,6 56,6 C64,6 64,30 72,30 L 148,30 C156,30 156,6 164,6 C172,6 172,30 180,30 L 256,30 C264,30 264,6 272,6 C280,6 280,30 288,30 L 364,30 C372,30 372,6 380,6 C388,6 388,30 396,30 L 472,30 C480,30 480,6 488,6 C496,6 496,30 504,30 L 580,30 C588,30 588,6 596,6 C604,6 604,30 612,30 L 688,30 C696,30 696,6 704,6 C712,6 712,30 720,30 L 796,30 C804,30 804,6 812,6 C820,6 820,30 828,30 L 900,30" />
+</svg>`;
+const COIL_SVG_DARK = `<svg class="coil coil-dark" viewBox="0 0 900 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+<path d="M0,30 L40,30 C48,30 48,6 56,6 C64,6 64,30 72,30 L 148,30 C156,30 156,6 164,6 C172,6 172,30 180,30 L 256,30 C264,30 264,6 272,6 C280,6 280,30 288,30 L 364,30 C372,30 372,6 380,6 C388,6 388,30 396,30 L 472,30 C480,30 480,6 488,6 C496,6 496,30 504,30 L 580,30 C588,30 588,6 596,6 C604,6 604,30 612,30 L 688,30 C696,30 696,6 704,6 C712,6 712,30 720,30 L 796,30 C804,30 804,6 812,6 C820,6 820,30 828,30 L 900,30" />
+</svg>`;
+const COIL_SVG_HERO = `<svg class="coil coil-dark" viewBox="0 0 900 36" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img">
+<title>Signal koji putuje kroz niz Pupinovih kalemova</title>
+<path d="M0,30 L40,30 C48,30 48,6 56,6 C64,6 64,30 72,30 L 148,30 C156,30 156,6 164,6 C172,6 172,30 180,30 L 256,30 C264,30 264,6 272,6 C280,6 280,30 288,30 L 364,30 C372,30 372,6 380,6 C388,6 388,30 396,30 L 472,30 C480,30 480,6 488,6 C496,6 496,30 504,30 L 580,30 C588,30 588,6 596,6 C604,6 604,30 612,30 L 688,30 C696,30 696,6 704,6 C712,6 712,30 720,30 L 796,30 C804,30 804,6 812,6 C820,6 820,30 828,30 L 900,30" />
+<circle class="pulse pulse-dot" r="4.5" />
+</svg>`;
+
+const T = {
+sr: {
+  meta:{ tag:"Fizičar &amp; izumitelj" },
+  nav:{ home:"Početna", life:"Život", achievements:"Dostignuća" },
+  home:{
+    eyebrow:"1858–1935 · Idvor, Banat",
+    title:"Mihajlo Pupin",
+    subtitle:"Fizičar, izumitelj i diplomata koji je spojio kontinent žicom i vratio Srbiju na kartu sveta.",
+    cta1:"Pogledaj život", cta2:"Vidi dostignuća",
+    introEyebrow:"Uvod",
+    introTitle:"Od pastira do profesora",
+    introText:"Rođen u banatskom selu bez škole i bez struje, Mihajlo Pupin se sa nepunih dvadeset godina, gotovo bez novca i bez znanja engleskog jezika, iskrcao u Njujorku. Četvrt veka kasnije njegovo ime je stajalo na patentima koji su omogućili telefonski razgovor preko čitavog kontinenta, a njegova reč se tražila i u laboratorijama Kolumbije i u kabinetima američke diplomatije. Ovo je priča o čoveku koji je verovao da se udaljenost — ona geografska, i ona između neznanja i znanja — može premostiti, korak po korak, kalem po kalem.",
+    factsTitle:"U brojevima",
+    facts:[
+      {value:"Idvor, Banat", label:"Rodno mesto"},
+      {value:"1874.", label:"Dolazak u Ameriku"},
+      {value:"Columbia University", label:"Univerzitet i profesura"},
+      {value:"1899.", label:"Patent Pupinovog kalema"},
+      {value:"34", label:"Registrovana patenta"},
+      {value:"1924.", label:"Pulicerova nagrada"}
+    ],
+    pillarsTitle:"Tri lica jednog života",
+    pillars:[
+      {num:"01", title:"Imigrant", text:"Sa pet centi u džepu i rečnikom u ruci, izgradio je put od banatskog seoceta do univerzitetskih amfiteatara Njujorka.", link:"life", linkLabel:"Pročitaj o životu"},
+      {num:"02", title:"Izumitelj", text:"Kalem koji nosi njegovo ime omogućio je telefonske razgovore na hiljade kilometara i promenio način na koji se svet čuo.", link:"achievements", linkLabel:"Vidi dostignuća"},
+      {num:"03", title:"Diplomata", text:"Kada je Srbiji bio najpotrebniji glas u Vašingtonu, Pupin ga je pozajmio — i pomogao da mala zemlja bude viđena i saslušana.", link:"life", linkLabel:"Pročitaj o životu"}
+    ],
+    reflectionEyebrow:"Nasleđe",
+    reflectionText:"Pupin je svoj život opisivao kao svedočanstvo da se poreklo ne meri selom u kojem je čovek rođen, već daljinom koju je spreman da pređe u potrazi za znanjem.",
+    ctaTitle1:"Detinjstvo, put i povratak",
+    ctaText1:"Od Idvora, preko Kastl Gardena, do katedri Kolumbije i pariskih pregovaračkih stolova.",
+    ctaTitle2:"Nauka koja je spojila kontinent",
+    ctaText2:"Kalemovi, rendgenski zraci, patenti i institucije koje je Pupin pomogao da se izgrade."
+  },
+  life:{
+    eyebrow:"Biografija",
+    title:"Put od Idvora do Njujorka",
+    intro:"Pupinov život se ne može ispričati kao jedna linija — to je pre niz mostova: između sela i grada, između Evrope i Amerike, između neznanja i nauke, između Srbije i sveta koji je trebalo ubediti da je čuje.",
+    sections:[
+      {year:"1858", h:"Detinjstvo u Banatu", p:["Mihajlo Idvorski Pupin rođen je u selu Idvor u Banatu, u porodici zemljoradnika Konstantina i Olimpijade Pupin. Selo nije imalo školu, a njegova majka, iako nepismena, insistirala je da sinu prepričava narodne priče i podstiče ga da postavlja pitanja o svetu izvan seoskog atara.", "Kao dečak koji je čuvao stoku na banatskim ravnicama, Pupin je posmatrao podizanje telegrafskih stubova između Pančeva i Vršca. Fasciniran idejom da žica može da nosi poruku brže nego što je konj može odneti, dugo je razmišljao o nevidljivim silama koje pokreću svet — radoznalost koja će odrediti čitav njegov kasniji život."]},
+      {year:"1870–1874", h:"Škola, prognanstvo i odluka da ode", p:["Školovanje je nastavio u realkama u Pančevu i Pragu, gde se priključio krugovima srpske omladine okupljene oko ideje nacionalnog i kulturnog buđenja. Zbog te aktivnosti dolazio je pod nadzor austrougarskih vlasti, a materijalne prilike porodice postajale su sve teže nakon očeve smrti.", "Sa jedva navršenih šesnaest godina, Pupin je odlučio da napusti Austrougarsku i pokuša sreću u Americi — odluka koja je u to vreme značila i verovatan oproštaj od porodice zauvek."]},
+      {year:"1874", h:"Iskrcavanje u Americi", p:["U Njujork je stigao 1874. godine, sa oko pet centi u džepu i bez ijedne reči engleskog jezika. Prve godine proveo je radeći fizičke poslove — kao poljoprivredni radnik na farmi u Delaveru, a potom u fabrici keksa na Menhetnu, gde je noću učio jezik čitajući novine i pohađajući besplatne večernje kurseve.", "Engleski je usavršio delom zahvaljujući čitanju dela Šekspira i novinskih tekstova, a delom razgovorima sa radnicima s kojima je delio smeštaj. Uporno se pripremao za prijemni ispit na Kolumbiji, uveren da je obrazovanje jedini siguran most ka boljem životu."]},
+      {year:"1879–1883", h:"Studentske godine na Kolumbiji", p:["Godine 1879. položio je prijemni ispit i upisao Columbia College. Uprkos tome što je paralelno radio da bi se izdržavao, isticao se u klasičnim jezicima, matematici i fizici, a 1883. diplomirao je sa najvišim počastima svoje generacije.", "Uspeh na studijama doneo mu je stipendiju za dalje usavršavanje u Evropi — priliku koju je iskoristio da se vrati na kontinent koji je napustio kao siromašan mladić, ovoga puta kao student fizike."]},
+      {year:"1883–1889", h:"Kembridž i Berlin", p:["U Kembridžu je produbio znanje matematičke fizike, a potom je otišao u Berlin, gde je doktorirao 1889. godine pod mentorstvom Hermana fon Helmholca, jednog od najuglednijih fizičara epohe. Tema njegovog istraživanja bila je vezana za termodinamiku i elektromagnetizam.", "Berlinske godine oblikovale su njegov naučni metod — strogu eksperimentalnu disciplinu koju je kasnije preneo generacijama studenata u Njujorku."]},
+      {year:"1889–1901", h:"Povratak i profesura na Kolumbiji", p:["Po povratku u Ameriku 1889. godine, Pupin se pridružio Kolumbiji kao predavač. Njegov naučni i pedagoški rad brzo je prepoznat, te je 1901. postao prvi profesor elektromehanike na ovom univerzitetu — poziciju koju je držao više od tri decenije.", "Izgradio je laboratorije koje su kasnije nosile njegovo ime i uveo generacije inženjera u tada mladu disciplinu primenjene elektrotehnike."]},
+      {year:"1888–1896", h:"Porodični život", p:["Godine 1888. oženio se Sarom Ketrin Džekson. Imali su troje dece, ali je Sara preminula 1896. godine, ostavivši Pupina da sam brine o porodici dok je istovremeno vodio intenzivnu naučnu i pedagošku karijeru na Kolumbiji."]},
+      {year:"1914–1919", h:"Rat i zalaganje za Srbiju", p:["Tokom Prvog svetskog rata Pupin je iskoristio svoj ugled u američkim naučnim i javnim krugovima da skrene pažnju na stradanje Srbije. Bio je jedan od pokretača pomoći srpskim izbeglicama i vojnicima i redovno je pisao i govorio u prilog srpskoj stvari u američkoj štampi.", "Kao neformalni savetnik srpskoj delegaciji, doprineo je da Vašington i javno mnjenje SAD bolje razumeju položaj Srbije i, kasnije, novoformirane jugoslovenske države na Pariskoj mirovnoj konferenciji."]},
+      {year:"1920–1935", h:"Poslednje godine i nasleđe", p:["U poznijim godinama Pupin je ostao aktivan u naučnim telima i javnom životu, primao je počasti američkih i evropskih institucija i 1923. objavio autobiografiju „Sa pašnjaka do naučenjaka” (From Immigrant to Inventor), koja je postala jedan od najčitanijih opisa američkog sna u ranom dvadesetom veku.", "Mihajlo Pupin preminuo je 12. marta 1935. godine u Njujorku. Njegova sahrana okupila je predstavnike akademske, naučne i diplomatske zajednice, a njegovo ime je do danas ostalo simbol veze između Srbije i Sjedinjenih Američkih Država."]}
+    ],
+    timelineTitle:"Hronologija",
+    timeline:[
+      {year:"1858", text:"Rođen u Idvoru, u Banatu."},
+      {year:"1874", text:"Emigrira u Sjedinjene Američke Države bez novca i znanja jezika."},
+      {year:"1879", text:"Upisuje Columbia College nakon položenog prijemnog ispita."},
+      {year:"1883", text:"Diplomira sa najvišim počastima; dobija stipendiju za studije u Evropi."},
+      {year:"1889", text:"Doktorira u Berlinu kod Hermana fon Helmholca; vraća se na Kolumbiju."},
+      {year:"1896", text:"Otkriva sekundarno rendgensko zračenje; iste godine gubi suprugu Saru."},
+      {year:"1899", text:"Patentira sistem kalemova za produženje dometa telefonskog signala."},
+      {year:"1901", text:"Postaje prvi profesor elektromehanike na Kolumbiji."},
+      {year:"1915", text:"Angažuje se u pomoći Srbiji i zastupanju srpske stvari u SAD."},
+      {year:"1924", text:"Dobija Pulicerovu nagradu za autobiografiju."},
+      {year:"1935", text:"Umire u Njujorku, 12. marta."}
+    ]
+  },
+  achievements:{
+    eyebrow:"Nauka i nasleđe",
+    title:"Nauka koja je spojila kontinent",
+    intro:"Pupinov rad se prostire od telefonije i rendgenologije do bežične telegrafije i osnivanja naučnih institucija koje i danas oblikuju američku nauku. Zajedno, ta dostignuća čine priču o čoveku koji je udaljenost — signala, znanja i naroda — pretvorio u svoj životni poziv.",
+    cardsTitle:"Ključni doprinosi",
+    cards:[
+      {year:"1899", title:"Pupinov kalem", text:"Sistem periodično raspoređenih indukcionih kalemova koji je omogućio da telefonski i telegrafski signal putuje na mnogostruko veće razdaljine bez gubitka kvaliteta. Patent je otkupila kompanija AT&T, čime je praktično omogućena izgradnja transkontinentalnih telefonskih linija u SAD."},
+      {year:"1896", title:"Sekundarno rendgensko zračenje", text:"Nedugo posle otkrića X-zraka, Pupin je pokazao da fluorescentni ekran postavljen iza pacijenta pojačava rendgensku sliku, skraćujući vreme snimanja sa desetina minuta na svega nekoliko sekundi. Otkriće je odmah primenjeno u praksi, uključujući lociranje sačme u telu ranjenika."},
+      {year:"1890-e", title:"Rezonantna kola i bežična telegrafija", text:"Pupinov rad na naštrojenim (rezonantnim) električnim kolima doprineo je ranom razvoju bežične telegrafije. Deo njegovih patenata iz ove oblasti kasnije je otkupila Markonijeva kompanija za bežičnu telegrafiju."},
+      {year:"1889–1935", title:"34 patenta", text:"Tokom naučne karijere prijavio je ukupno 34 patenta iz oblasti telekomunikacija, elektrotehnike i primenjene fizike — raspon koji svedoči o širini njegovog inženjerskog interesovanja."},
+      {year:"1912–1926", title:"Predsednik naučnih udruženja", text:"Bio je prvi predsednik Instituta radio-inženjera (IRE), a kasnije i predsednik Američkog instituta električnih inženjera (AIEE), gde je pomagao da se formulišu profesionalni standardi mlade discipline elektrotehnike."},
+      {year:"1922–1924", title:"Nacionalni savet za istraživanja i NACA", text:"Učestvovao je u radu Nacionalnog saveta za istraživanja (National Research Council) i Nacionalnog savetodavnog komiteta za aeronautiku (NACA) — institucije koja je kasnije prerasla u NASA-u, doprinoseći institucionalizaciji naučnog istraživanja u SAD."},
+      {year:"1924", title:"Pulicerova nagrada", text:"Za autobiografiju „Sa pašnjaka do naučenjaka” (From Immigrant to Inventor) dobio je Pulicerovu nagradu — retko priznanje za naučnika van polja književnosti i novinarstva, koje je knjigu učinilo bestselerom i simbolom američkog sna."},
+      {year:"1918–1919", title:"Diplomatsko nasleđe", text:"Kao savetnik i posrednik u komunikaciji sa američkom administracijom, doprineo je da se srpsko i jugoslovensko pitanje bolje razumeju u Vašingtonu, uoči i tokom Pariske mirovne konferencije."},
+      {year:"Danas", title:"Trajno nasleđe", text:"Zgrada fizike na Kolumbiji nosi njegovo ime (Pupin Hall) i u njoj su kasnije rađeni eksperimenti koji su doveli do Menhetn projekta. Institut „Mihajlo Pupin” u Beogradu, most u Pančevu i brojne škole u Srbiji i danas nose njegovo ime."}
+    ],
+    honorsTitle:"Priznanja i počasti",
+    honors:[
+      {name:"Eliot Kreson medalja, Frenklinov institut", year:"1902"},
+      {name:"Edisonova medalja, AIEE", year:"1920"},
+      {name:"Pulicerova nagrada za autobiografiju", year:"1924"},
+      {name:"Predsednik Njujorške akademije nauka", year:"1927–1928"},
+      {name:"Brojni počasni doktorati američkih i evropskih univerziteta", year:"1900–1930-e"}
+    ],
+    legacyTitle:"Zašto je ovo važno danas",
+    legacyText:"Pupinova dostignuća nisu samo istorijska fusnota — Pupinovi kalemovi su decenijama bili standardni deo telefonske infrastrukture, njegov doprinos rendgenologiji ubrzao je razvoj medicinske dijagnostike, a institucije koje je pomogao da izgradi i danas oblikuju američku nauku i vazduhoplovstvo. Njegov put od banatskog sela do vrha američke nauke ostaje jedan od najupečatljivijih primera veze između uporne radoznalosti i praktičnog napretka."
+  },
+  footer:{ note:"Napravljeno kao posveta srpskom naučniku i njegovom putu od Idvora do Kolumbije." }
+},
+en: {
+  meta:{ tag:"Physicist &amp; inventor" },
+  nav:{ home:"Home", life:"Life", achievements:"Achievements" },
+  home:{
+    eyebrow:"1858–1935 · Idvor, Banat",
+    title:"Mihajlo Pupin",
+    subtitle:"A physicist, inventor and diplomat who wired a continent together and put Serbia back on the map.",
+    cta1:"Explore his life", cta2:"See his achievements",
+    introEyebrow:"Introduction",
+    introTitle:"From shepherd boy to professor",
+    introText:"Born in a Banat village with no school and no electricity, Mihajlo Pupin landed in New York at not quite twenty, almost penniless and without a word of English. A quarter century later, his name sat on patents that let a telephone call travel across an entire continent, and his voice was sought both in Columbia's laboratories and in the corridors of American diplomacy. This is the story of a man who believed distance — geographic distance, and the distance between ignorance and knowledge — could be bridged, one step, one coil, at a time.",
+    factsTitle:"By the numbers",
+    facts:[
+      {value:"Idvor, Banat", label:"Birthplace"},
+      {value:"1874", label:"Arrival in America"},
+      {value:"Columbia University", label:"University and professorship"},
+      {value:"1899", label:"Loading coil patent"},
+      {value:"34", label:"Registered patents"},
+      {value:"1924", label:"Pulitzer Prize"}
+    ],
+    pillarsTitle:"Three sides of one life",
+    pillars:[
+      {num:"01", title:"Immigrant", text:"With five cents in his pocket and a dictionary in hand, he built a road from a Banat hamlet to New York's lecture halls.", link:"life", linkLabel:"Read his life story"},
+      {num:"02", title:"Inventor", text:"The coil that bears his name let telephone calls travel thousands of kilometres and changed how the world could hear itself.", link:"achievements", linkLabel:"See his achievements"},
+      {num:"03", title:"Diplomat", text:"When Serbia most needed a voice in Washington, Pupin lent it his — and helped a small country be seen and heard.", link:"life", linkLabel:"Read his life story"}
+    ],
+    reflectionEyebrow:"Legacy",
+    reflectionText:"Pupin described his own life as proof that a person's origin is measured not by the village they were born in, but by the distance they are willing to travel in pursuit of knowledge.",
+    ctaTitle1:"Childhood, passage, and return",
+    ctaText1:"From Idvor, through Castle Garden, to Columbia's lecture halls and the negotiating tables of Paris.",
+    ctaTitle2:"Science that wired a continent",
+    ctaText2:"Coils, X-rays, patents, and the institutions Pupin helped build."
+  },
+  life:{
+    eyebrow:"Biography",
+    title:"The road from Idvor to New York",
+    intro:"Pupin's life resists being told as a single line — it reads more like a series of bridges: between village and city, Europe and America, ignorance and science, Serbia and a world that had to be persuaded to listen.",
+    sections:[
+      {year:"1858", h:"Childhood in Banat", p:["Mihajlo Idvorski Pupin was born in the village of Idvor in the Banat region, to farmers Konstantin and Olimpijada Pupin. The village had no school, and his mother, though illiterate herself, insisted on retelling him folk stories and encouraging him to ask questions about the world beyond the village fields.", "As a boy herding cattle on the Banat plains, Pupin watched telegraph poles being raised between Pančevo and Vršac. Fascinated that a wire could carry a message faster than a horse could carry a rider, he spent long hours wondering about the invisible forces driving the world — a curiosity that would shape the rest of his life."]},
+      {year:"1870–1874", h:"School, surveillance, and the decision to leave", p:["He continued his schooling in Pančevo and Prague, joining circles of Serbian youth gathered around ideas of national and cultural awakening. That activity drew the attention of Austro-Hungarian authorities, while the family's finances worsened after his father's death.", "At barely sixteen, Pupin decided to leave Austria-Hungary and try his luck in America — a decision that, at the time, likely meant saying goodbye to his family for good."]},
+      {year:"1874", h:"Arrival in America", p:["He reached New York in 1874 with about five cents in his pocket and not a word of English. His first years were spent doing physical labour — as a farmhand in Delaware, then in a cracker factory in Manhattan, where he studied the language at night by reading newspapers and attending free evening classes.", "He sharpened his English partly through reading Shakespeare and newspaper articles, and partly through conversations with fellow workers he shared lodgings with. He prepared doggedly for Columbia's entrance exam, convinced that education was the one certain bridge to a better life."]},
+      {year:"1879–1883", h:"Student years at Columbia", p:["In 1879 he passed the entrance exam and enrolled at Columbia College. Despite working to support himself throughout, he excelled in classics, mathematics and physics, and in 1883 graduated with the highest honours in his class.", "His academic success earned him a scholarship for further study in Europe — a chance to return, as a physics student this time, to the continent he had left as a poor young man."]},
+      {year:"1883–1889", h:"Cambridge and Berlin", p:["At Cambridge he deepened his knowledge of mathematical physics, then moved on to Berlin, where he earned his doctorate in 1889 under the mentorship of Hermann von Helmholtz, one of the era's most eminent physicists. His research dealt with thermodynamics and electromagnetism.", "The Berlin years shaped his scientific method — a rigorous experimental discipline he would later pass on to generations of students in New York."]},
+      {year:"1889–1901", h:"Return and a professorship at Columbia", p:["On returning to America in 1889, Pupin joined Columbia as an instructor. His scientific and teaching work was quickly recognised, and in 1901 he became the university's first professor of electromechanics — a position he held for more than three decades.", "He built the laboratories that would later carry his name, introducing generations of engineers to the then-young discipline of applied electrical engineering."]},
+      {year:"1888–1896", h:"Family life", p:["In 1888 he married Sarah Katharine Jackson. They had three children, but Sarah died in 1896, leaving Pupin to raise the family alone while carrying on an intense scientific and teaching career at Columbia."]},
+      {year:"1914–1919", h:"War and advocacy for Serbia", p:["During the First World War, Pupin used his standing in American scientific and public life to draw attention to Serbia's suffering. He helped organise relief for Serbian refugees and soldiers and regularly wrote and spoke in the American press on Serbia's behalf.", "As an unofficial adviser to the Serbian delegation, he helped Washington and American public opinion better understand the position of Serbia and, later, the newly formed Yugoslav state at the Paris Peace Conference."]},
+      {year:"1920–1935", h:"Final years and legacy", p:["In his later years Pupin remained active in scientific bodies and public life, received honours from American and European institutions, and in 1923 published his autobiography, From Immigrant to Inventor, which became one of the most widely read accounts of the American dream in the early twentieth century.", "Mihajlo Pupin died on 12 March 1935 in New York. His funeral drew figures from the academic, scientific and diplomatic worlds, and his name remains, to this day, a symbol of the bond between Serbia and the United States."]}
+    ],
+    timelineTitle:"Timeline",
+    timeline:[
+      {year:"1858", text:"Born in Idvor, in the Banat region."},
+      {year:"1874", text:"Emigrates to the United States with no money and no English."},
+      {year:"1879", text:"Enrolls at Columbia College after passing the entrance exam."},
+      {year:"1883", text:"Graduates with the highest honours; wins a scholarship to study in Europe."},
+      {year:"1889", text:"Earns his doctorate in Berlin under Hermann von Helmholtz; returns to Columbia."},
+      {year:"1896", text:"Discovers secondary X-ray radiation; loses his wife, Sarah, the same year."},
+      {year:"1899", text:"Patents a system of coils that extends the range of telephone signals."},
+      {year:"1901", text:"Becomes Columbia's first professor of electromechanics."},
+      {year:"1915", text:"Becomes active in aiding Serbia and advocating its cause in the US."},
+      {year:"1924", text:"Awarded the Pulitzer Prize for his autobiography."},
+      {year:"1935", text:"Dies in New York on 12 March."}
+    ]
+  },
+  achievements:{
+    eyebrow:"Science and legacy",
+    title:"Science that wired a continent",
+    intro:"Pupin's work spans telephony and radiology to wireless telegraphy and the founding of scientific institutions that still shape American science today. Together, these achievements tell the story of a man who made bridging distance — of signal, of knowledge, of nations — his life's calling.",
+    cardsTitle:"Key contributions",
+    cards:[
+      {year:"1899", title:"The Pupin coil", text:"A system of periodically spaced loading coils that let telephone and telegraph signals travel far greater distances without losing quality. The patent was bought by AT&T, effectively enabling the build-out of transcontinental telephone lines in the US."},
+      {year:"1896", title:"Secondary X-ray radiation", text:"Shortly after the discovery of X-rays, Pupin showed that a fluorescent screen placed behind a patient intensified the X-ray image, cutting exposure times from tens of minutes to a matter of seconds. The discovery was put to immediate practical use, including locating shrapnel in wounded soldiers."},
+      {year:"1890s", title:"Tuned circuits and wireless telegraphy", text:"Pupin's work on tuned, resonant electrical circuits contributed to the early development of wireless telegraphy. Some of his patents in this area were later purchased by Marconi's wireless telegraph company."},
+      {year:"1889–1935", title:"34 patents", text:"Over the course of his career he filed 34 patents across telecommunications, electrical engineering and applied physics — a range that speaks to the breadth of his engineering interests."},
+      {year:"1912–1926", title:"President of scientific societies", text:"He served as the first president of the Institute of Radio Engineers (IRE) and later as president of the American Institute of Electrical Engineers (AIEE), helping shape the professional standards of the young discipline of electrical engineering."},
+      {year:"1922–1924", title:"National Research Council and NACA", text:"He took part in the work of the National Research Council and the National Advisory Committee for Aeronautics (NACA) — the institution that would later become NASA — contributing to the institutionalisation of scientific research in the US."},
+      {year:"1924", title:"Pulitzer Prize", text:"His autobiography, From Immigrant to Inventor, won the Pulitzer Prize — a rare honour for a scientist outside literature and journalism, which turned the book into a bestseller and a symbol of the American dream."},
+      {year:"1918–1919", title:"Diplomatic legacy", text:"As an adviser and go-between with the American administration, he helped Washington better understand the Serbian and Yugoslav question before and during the Paris Peace Conference."},
+      {year:"Today", title:"Lasting legacy", text:"Columbia's physics building, Pupin Hall, carries his name and later hosted experiments that fed into the Manhattan Project. The Mihajlo Pupin Institute in Belgrade, a bridge in Pančevo, and numerous schools across Serbia still bear his name today."}
+    ],
+    honorsTitle:"Honours and awards",
+    honors:[
+      {name:"Elliott Cresson Medal, Franklin Institute", year:"1902"},
+      {name:"Edison Medal, AIEE", year:"1920"},
+      {name:"Pulitzer Prize for his autobiography", year:"1924"},
+      {name:"President of the New York Academy of Sciences", year:"1927–1928"},
+      {name:"Numerous honorary doctorates from US and European universities", year:"1900–1930s"}
+    ],
+    legacyTitle:"Why it still matters",
+    legacyText:"Pupin's achievements are more than a historical footnote — his loading coils were a standard part of telephone infrastructure for decades, his contribution to radiology sped up the development of medical diagnostics, and the institutions he helped build still shape American science and aviation today. His road from a Banat village to the top of American science remains one of the most striking examples of what persistent curiosity can build."
+  },
+  footer:{ note:"Built as a tribute to the Serbian scientist and his journey from Idvor to Columbia." }
+}
+};
+
+/* ---------------- RENDER ---------------- */
+const app = document.getElementById('app');
+const PAGE = document.body.getAttribute('data-page');
+let currentLang = localStorage.getItem('pupin_lang') || 'sr';
+
+function iconFor(i){
+  const icons = [
+    '<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="10" stroke="#c17a3e" stroke-width="1.3"/><path d="M8 13h10M13 8v10" stroke="#c17a3e" stroke-width="1.3"/></svg>',
+    '<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><rect x="4" y="10" width="18" height="6" stroke="#c17a3e" stroke-width="1.3"/><path d="M4 13h18" stroke="#c17a3e" stroke-width="1.3"/></svg>',
+    '<svg width="26" height="26" viewBox="0 0 26 26" fill="none"><path d="M13 3v20M4 8l9-5 9 5M4 8v10l9 5 9-5V8" stroke="#c17a3e" stroke-width="1.2"/></svg>'
+  ];
+  return icons[i % icons.length];
+}
+
+function renderHome(t){
+  const h = t.home;
+  return `
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">${h.eyebrow}</div>
+      <h1>${h.title}</h1>
+      <p class="subtitle">${h.subtitle}</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="zivot.html" data-page-link="life">${h.cta1}</a>
+        <a class="btn btn-ghost" href="dostignuca.html" data-page-link="achievements">${h.cta2}</a>
+      </div>
+    </div>
+    <div class="hero-coil-wrap">${COIL_SVG_HERO}</div>
+  </section>
+
+  <section class="section-light">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">${h.introEyebrow}</div>
+        <h2>${h.introTitle}</h2>
+      </div>
+      <p class="lead">${h.introText}</p>
+
+      <div class="eyebrow" style="margin-top:56px;">${h.factsTitle}</div>
+      <div class="facts-grid">
+        ${h.facts.map(f=>`<div class="fact-cell"><div class="fact-value">${f.value}</div><div class="fact-label">${f.label}</div></div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-dark">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">${h.pillarsTitle}</div>
+      </div>
+      <div class="pillars">
+        ${h.pillars.map((p)=>`
+          <div class="pillar-card" data-page-link="${p.link}">
+            <div class="pillar-num">${p.num}</div>
+            <h3>${p.title}</h3>
+            <p>${p.text}</p>
+            <div class="pillar-link">${p.linkLabel} →</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <section class="section-paper2">
+    <div class="wrap">
+      <div class="eyebrow">${h.reflectionEyebrow}</div>
+      <div class="reflection"><p>${h.reflectionText}</p></div>
+    </div>
+  </section>
+
+  <div class="ctaband">
+    <a href="zivot.html" data-page-link="life">
+      <div class="eyebrow">01</div>
+      <h3>${h.ctaTitle1}</h3>
+      <p>${h.ctaText1}</p>
+      <div class="arrow">${t.nav.life} →</div>
+    </a>
+    <a href="dostignuca.html" data-page-link="achievements">
+      <div class="eyebrow">02</div>
+      <h3>${h.ctaTitle2}</h3>
+      <p>${h.ctaText2}</p>
+      <div class="arrow">${t.nav.achievements} →</div>
+    </a>
+  </div>
+  `;
+}
+
+function renderLife(t){
+  const l = t.life;
+  return `
+  <div class="page-header">
+    <div class="wrap">
+      <div class="eyebrow">${l.eyebrow}</div>
+      <h1>${l.title}</h1>
+      <p class="lead">${l.intro}</p>
+    </div>
+  </div>
+  <section class="section-light" style="padding-top:0;">
+    <div class="wrap">
+      ${l.sections.map(s=>`
+        <div class="life-section">
+          <div class="year-tag">${s.year}</div>
+          <div>
+            <h3>${s.h}</h3>
+            ${s.p.map(par=>`<p>${par}</p>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>
+  </section>
+  <section class="section-paper2">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">${l.timelineTitle}</div>
+      </div>
+      <div class="timeline">
+        ${l.timeline.map(tl=>`
+          <div class="tl-item">
+            <div class="tl-year">${tl.year}</div>
+            <div class="tl-text">${tl.text}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </section>
+  `;
+}
+
+function renderAchievements(t){
+  const a = t.achievements;
+  return `
+  <div class="page-header">
+    <div class="wrap">
+      <div class="eyebrow">${a.eyebrow}</div>
+      <h1>${a.title}</h1>
+      <p class="lead">${a.intro}</p>
+    </div>
+  </div>
+  <section class="section-light" style="padding-top:56px;">
+    <div class="wrap">
+      <div class="eyebrow">${a.cardsTitle}</div>
+      <div class="ach-grid">
+        ${a.cards.map(c=>`
+          <div class="ach-card">
+            <div class="ach-year">${c.year}</div>
+            <h3>${c.title}</h3>
+            <p>${c.text}</p>
+          </div>`).join('')}
+      </div>
+    </div>
+  </section>
+  <section class="section-dark">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">${a.honorsTitle}</div>
+      </div>
+      <div class="honors">
+        ${a.honors.map(h=>`<div class="honor-row"><span>${h.name}</span><span>${h.year}</span></div>`).join('')}
+      </div>
+    </div>
+  </section>
+  <section class="section-paper2">
+    <div class="wrap">
+      <div class="eyebrow">${a.legacyTitle}</div>
+      <div class="legacy-box"><p>${a.legacyText}</p></div>
+    </div>
+  </section>
+  `;
+}
+
+function render(){
+  const t = T[currentLang];
+  document.documentElement.lang = currentLang;
+  let html = '';
+  if(PAGE === 'home') html = renderHome(t);
+  else if(PAGE === 'life') html = renderLife(t);
+  else html = renderAchievements(t);
+  app.innerHTML = html;
+
+  document.title = 'Mihajlo Pupin — ' + t.nav[PAGE];
+
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const path = el.getAttribute('data-i18n').split('.');
+    let val = t;
+    path.forEach(p=> val = val && val[p]);
+    if(val) el.innerHTML = val;
+  });
+
+  document.querySelectorAll('.navlink').forEach(el=>{
+    const page = el.getAttribute('data-page-link');
+    el.classList.toggle('active', page === PAGE);
+  });
+
+  document.querySelectorAll('.lang-sr').forEach(el=>el.classList.toggle('active', currentLang==='sr'));
+  document.querySelectorAll('.lang-en').forEach(el=>el.classList.toggle('active', currentLang==='en'));
+
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+}
+
+document.body.addEventListener('click', (e)=>{
+  const card = e.target.closest('.pillar-card[data-page-link]');
+  if(card){
+    const target = card.getAttribute('data-page-link');
+    window.location.href = target === 'life' ? 'zivot.html' : target === 'achievements' ? 'dostignuca.html' : 'index.html';
+  }
+});
+
+function toggleLang(){
+  currentLang = currentLang === 'sr' ? 'en' : 'sr';
+  localStorage.setItem('pupin_lang', currentLang);
+  render();
+}
+document.getElementById('langToggleDesktop').addEventListener('click', toggleLang);
+document.getElementById('langToggleMobile').addEventListener('click', toggleLang);
+
+const menuPanel = document.getElementById('menuPanel');
+const scrim = document.getElementById('scrim');
+function openMenu(){ menuPanel.classList.add('open'); scrim.classList.add('open'); }
+function closeMenu(){ menuPanel.classList.remove('open'); scrim.classList.remove('open'); }
+document.getElementById('hamburgerBtn').addEventListener('click', openMenu);
+document.getElementById('menuCloseBtn').addEventListener('click', closeMenu);
+scrim.addEventListener('click', closeMenu);
+
+render();
+</script>
+</body>
+</html>
